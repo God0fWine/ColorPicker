@@ -1,0 +1,66 @@
+.line {
+    border-radius: 5px;
+    background: #E0E0E0;
+    width: 95px;
+    height: 5px;
+    margin: 10px;
+    margin-top: 10px;
+}
+.rele {
+    width: 10px;
+    height: 10px;
+    border-radius: 30px/30px;
+    float:left;
+    position: relative;
+    left: 0px;
+    top: -3px;
+    margin-left:0px;
+    color:white;
+    cursor: pointer;
+}
+
+.helpRGB{
+    position: absolute;
+    top: 2px;
+    right: -15px;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+#slider {
+    position: absolute;
+}
+
+#colorPicker{
+    position: relative;
+}
+
+/* #rgbColor{
+    position: fixed;
+    top: 25px;
+    left: 150px;
+    width: 100px;
+    height: 80px;
+} */
+
+/* #count{
+    position: absolute;
+    top: 5px;
+    left: 400px;   
+} */
+
+
+
+#red {
+    background: rgb(255, 0, 0);
+}
+
+#green {
+    background: rgb(0, 255, 0);
+}
+
+#blue{
+    background: rgb(0, 0, 255);
+}
+
