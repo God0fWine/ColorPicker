@@ -29,6 +29,9 @@
             <div class="line">
                 <div class="rele" id="blue"></div>
             </div>
+
+            <input type="button" id="ok" value="Ok"></input>
+            <input type="button" id="cancel" value="Cancel"></input>
             <!-- <div id="count"></div>
             <div id="rgbColor"></div> -->
         </div>
@@ -42,25 +45,41 @@
         function rgbToHex(r, g, b) {
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
+        // function componentToHex(c) {
+        //     var hex = c.toString(16);
+        //     return hex.length == 1 ? "0" + hex : hex;
+        // }
 
+        // function rgbToHex(r, g, b) {
+        //     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+        // }
+
+        // function hexToRgb(hex) {
+        //     var bigint = parseInt(hex, 16);
+        //     var r = (bigint >> 16) & 255;
+        //     var g = (bigint >> 8) & 255;
+        //     var b = bigint & 255;
+
+        //     return r + "," + g + "," + b;
+        // }
         function hexToRgb(hex) {
-            var bigint = parseInt(hex, 16);
-            var r = (bigint >> 16) & 255;
-            var g = (bigint >> 8) & 255;
-            var b = bigint & 255;
-
-            return r + "," + g + "," + b;
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
         }
 
         let select = document.getElementById("selectPicker");
 
         let colorMap = new Map();
 
-        colorMap.set("#FF0000", "red");
-        colorMap.set("#00FF00", "green");
-        colorMap.set("#0000FF", "blue");
+        colorMap.set("#ff0000", "red");
+        colorMap.set("#00ff00", "green");
+        colorMap.set("#0000ff", "blue");
         colorMap.set("#000000", "black");
-        colorMap.set("#FFFFFF", "white");
+        colorMap.set("#ffffff", "white");
 
         colorMap.forEach((value, key, map) => {
             let newOption = new Option(value, key);
@@ -75,17 +94,22 @@
         var rgbColor = document.querySelector(".helpRGB");
         rgbColor.style.backgroundColor = `${select.value}`;
 
-        select.addEventListener("change", function(event){
+        select.addEventListener("change", function (event) {
             rgbColor.style.backgroundColor = `${select.value}`;
-            let colorArr = hexToRgb(select.value).split(',').map(value => value.trim());
-            redS = colorArr[0];
-            greenS = colorArr[1];
-            blueS = colorArr[2];
+           // let colorArr = hexToRgb(select.value).split(',').map(value => value.trim());
+            // redS = colorArr[0];
+            // greenS = colorArr[1];
+            // blueS = colorArr[2];
+            redS = hexToRgb(select.value).r;
+            greenS = hexToRgb(select.value).g;
+            blueS = hexToRgb(select.value).b;
         });
+        var slider = document.getElementById("slider");
 
-
+        slider.hidden = true;
         rgbColor.addEventListener("click", function () {
 
+            slider.hidden = false;
             var currentPos = 0;
             var minCount = 0;
             var Count = 255;
@@ -94,15 +118,22 @@
             var line = document.querySelector(".line");
 
             // var count = document.getElementById("count");
-            var slider = document.getElementById("slider");
+
+            var okBtn = document.getElementById("ok");
+            var cancelBtn = document.getElementById("cancel");
 
 
 
             var rightEdge = line.offsetWidth - reles[0].offsetWidth;
 
-            // for (let rele of reles) {
-            //     rele.style.left = ((currentPos - minCount) * rightEdge) / Count + "px";
-            // }
+
+            // reles[0].style.left = ((redS - minCount) * rightEdge) / Count + "px";
+            // reles[1].style.left = ((greenS - minCount) * rightEdge) / Count + "px";
+            // reles[2].style.left = ((blueS - minCount) * rightEdge) / Count + "px";
+            reles[0].style.left = redS / 3 + "px";
+            reles[1].style.left = greenS / 3 + "px";
+            reles[2].style.left = blueS / 3 + "px";
+
 
 
 
@@ -152,7 +183,34 @@
 
                     rgbColor.style.background = `rgb(${redS}, ${greenS}, ${blueS})`;
 
+
+
                 }
+
+                okBtn.onclick = function (event) {
+                    let newhexColor = rgbToHex(redS, greenS, blueS);
+                    if (colorMap.has(newhexColor)) {
+                        for (let option of select.options) {
+                            if (option.value == newhexColor) {
+                                option.selected = true;
+                                slider.hidden = true;
+                            }
+                        }
+                        return false;
+                    }
+                    colorMap.set(newhexColor, newhexColor);
+                    let newOpt = new Option(newhexColor, newhexColor);
+                    select.append(newOpt);
+                    newOpt.selected = true;
+                    slider.hidden = true;
+
+                };
+
+                cancelBtn.onclick = function (event) {
+                    slider.hidden = true;
+                    rgbColor.style.backgroundColor = `${select.value}`;
+                    return false;
+                };
                 document.onmouseup = function () {
                     document.onmousemove = document.onmouseup = null;
                 };
